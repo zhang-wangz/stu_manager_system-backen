@@ -1,0 +1,33 @@
+server:
+  tomcat:
+    uri-encoding: utf-8
+  servlet:
+    context-path: /api
+  error:
+    path: common/error
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123
+    url: jdbc:mysql://139.9.90.185:3306/stu_union?characterEncoding=utf-8&useSSL=false
+  jpa:
+    show-sql: true
+
+
+
+#设置响应为utf-8
+#  spring.http.encoding.force-response=true
+
+
+#shiro:
+#  sessionManager:
+#    sessionIdCookieEnabled: true
+#    sessionIdUrlRewritingEnabled: true
+#  unauthorizedUrl: /login
+#  web:
+#    enabled: true #表示开启shiro
+#  successUrl: /person/list
+#  loginUrl: /login
