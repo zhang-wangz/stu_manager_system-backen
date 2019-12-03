@@ -1,5 +1,6 @@
 package edu.project.ruangong.dao.mapper
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import javax.persistence.*
 
 @Entity
@@ -18,12 +19,13 @@ data class QingjiaEntity(
     @Column(name = "vacatereason", nullable = false)
     var vacatereason: String? = null
     ) {
-
         @Column(name = "leavetime", nullable = false)
-        lateinit var leavetime: java.sql.Timestamp
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        lateinit var leavetime: java.util.Date
 
         @Column(name = "backtime", nullable = false)
-        lateinit var backtime: java.sql.Timestamp
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        lateinit var backtime: java.util.Date
 
         @Column(name = "judgeid", nullable = false)
         var judgeid: String? = null

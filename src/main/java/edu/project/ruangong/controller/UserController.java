@@ -9,6 +9,7 @@ import edu.project.ruangong.form.UserFormLogin;
 import edu.project.ruangong.form.UserFormRegister;
 import edu.project.ruangong.repo.DepartRepo;
 import edu.project.ruangong.repo.UserBaseRepository;
+import edu.project.ruangong.service.DepartService;
 import edu.project.ruangong.service.UserService;
 import edu.project.ruangong.utils.Md5Utils;
 import edu.project.ruangong.utils.ResultUtil;
@@ -28,6 +29,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DepartService departService;
 
     @Autowired
     private UserBaseRepository userBaseRepository;
@@ -84,6 +88,8 @@ public class UserController {
         userBaseRepository.save(user);
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto);
+        if(userDto.getDepartments()==null) return ResultUtil.error(-4, "部门名不可为空");
+        userDto.setDepId(departService.getDepIdByName(userDto.getDepartments()));
 //        String JWT = JwtUtils.createJWT(userDto.getUid(), userDto.getUsername(), SystemConstant.JWT_TTL);
 //        response.setHeader("token",JWT);
         return ResultUtil.success(userDto);

@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.sql.Timestamp;
 
 
-@Entity
+//@Entity
 @Data
 public class UserDto {
     @Id
@@ -25,4 +25,6 @@ public class UserDto {
     private Integer activecode = 0;
 //    private String jwt;
     private String extr;
+
+    private String depId = null;
 }

@@ -1,5 +1,8 @@
 package edu.project.ruangong.form
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.format.annotation.DateTimeFormat
+import java.sql.Date
 import java.sql.Timestamp
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -20,7 +23,7 @@ data class ActForm(
 
         var activityid:String?=null,
 
-        @NotEmpty(message = "活动名称不可为空")
+//        @NotEmpty(message = "活动名称不可为空")
         @Column(name = "activityname")
         var activityname: String,
 
@@ -32,12 +35,14 @@ data class ActForm(
         var departmentassist: String?,
 
         @Column(name = "starttime")
+        @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
         @Future(message = "请确定一个未来的开始时间")
-        var starttime: Timestamp,
+        var starttime: java.util.Date,
 
         @Column(name = "overtime")
+        @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
         @Future(message = "请确定一个未来的结束时间")
-        var overtime: Timestamp,
+        var overtime: java.util.Date,
 
         @Column(name = "applydep")
         @NotEmpty(message = "申请部门不可为空")

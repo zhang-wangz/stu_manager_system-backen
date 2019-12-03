@@ -32,6 +32,6 @@ public class User {
     return uid;
   }
   public String getDepartments() {
-    return uid;
+    return departments;
   }
 }

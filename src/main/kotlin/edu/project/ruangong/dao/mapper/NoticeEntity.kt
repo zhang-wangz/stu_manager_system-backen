@@ -1,6 +1,7 @@
 package edu.project.ruangong.dao.mapper
 
-import java.sql.Timestamp
+import com.fasterxml.jackson.annotation.JsonFormat
+import java.util.Date
 import javax.persistence.*
 
 /**
@@ -24,7 +25,6 @@ data class NoticeEntity(
         @get:Column(name = "userid", nullable = false, insertable = false, updatable = false)
         var userid: String? = null,
 
-
         @get:Column(name = "checknum", nullable = false)
         var checknum: Int? = null,
 
@@ -32,10 +32,12 @@ data class NoticeEntity(
         var depuid: String?=null
 ){
     @Column(name = "deptime")
-    lateinit var starttime: Timestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    lateinit var starttime: Date
 
     @Column(name = "canceltime")
-    var overtime: Timestamp?=null
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    var overtime: Date?=null
 
     @Column(name = "noticetype")
     var noticetype: String?=null

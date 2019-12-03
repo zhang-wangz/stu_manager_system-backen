@@ -3,18 +3,26 @@ package edu.project.ruangong.controller
 import edu.project.ruangong.dao.mapper.JudgeEntity
 import edu.project.ruangong.dao.mapper.QingjiaEntity
 import edu.project.ruangong.dao.mapper.User
+import edu.project.ruangong.dto.qingjiadto
+import edu.project.ruangong.form.Judgedto
 import edu.project.ruangong.form.QingjiaForm
 import edu.project.ruangong.repo.*
 import edu.project.ruangong.service.impl.JudgeServiceImpl
 import edu.project.ruangong.service.impl.NoticeServiceImpl
+import edu.project.ruangong.utils.JudgeUtils
 import edu.project.ruangong.utils.KeyUtil
 import edu.project.ruangong.utils.ResultUtil
 import edu.project.ruangong.vo.ResultVO
+import io.swagger.annotations.*
+import lombok.extern.log4j.Log4j2
 import org.springframework.beans.BeanUtils
+import org.springframework.beans.propertyeditors.CustomDateEditor
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.validation.BindingResult
+import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.validation.Valid
 import kotlin.collections.ArrayList
@@ -24,8 +32,7 @@ import kotlin.collections.ArrayList
  * @date  2019/11/26 10:45 下午
  * @version init
  */
-
-
+@Api(value = "qingjia接口")
 @RestController
 @RequestMapping("/qingjia")
 class QingControl(private val actrepo: ActRepo,
@@ -37,15 +44,19 @@ class QingControl(private val actrepo: ActRepo,
                   private val judgeService: JudgeServiceImpl,
                   private val noticeService: NoticeServiceImpl){
 
+    @InitBinder
+    fun initBinder(binder: WebDataBinder) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        dateFormat.timeZone= TimeZone.getTimeZone("GMT+:08:00")
+        dateFormat.isLenient = false
+        binder.registerCustomEditor(Date::class.java, CustomDateEditor(dateFormat, true))
+    }
+
     @PostMapping("/addvacate")
-    fun addAct(@Valid qingjiaForm: QingjiaForm,
+    @ApiResponse(code = 0, message = "操作成功")
+    fun addAct(@ApiParam(name="传入对象",value="传入json格式",required=true)@Valid qingjiaForm: QingjiaForm,
                bindRes: BindingResult): ResultVO<Any?> {
         if(bindRes.hasErrors()) return ResultUtil.error(-1, bindRes.getFieldError()!!.defaultMessage)
-//        qingjiaForm.departmentassist?.apply {
-//            this.split(",").forEach{
-//                departRepo.findDepByDepartmentname(it)?: return ResultUtil.error(-1,"协同部门不存在")
-//            }
-//        }
         qingjiaForm.apply {
             if(leavetime.before(Timestamp(System.currentTimeMillis()))) return ResultUtil.error(-1,"开始时间必须是一个未来时间")
             if(leavetime.after(backtime)) return ResultUtil.error(-1,"开始时间必须比结束时间早")
@@ -65,7 +76,7 @@ class QingControl(private val actrepo: ActRepo,
             judrepo.save(it)
         }
         return ResultUtil.success(mapOf(
-                "actId" to qingjia.vacateid,
+                "vacateid" to qingjia.vacateid,
                 "applyuserId" to qingjia.vacateperson,
                 "judgeId" to judgeId
         ))
@@ -73,7 +84,10 @@ class QingControl(private val actrepo: ActRepo,
 
 
     @GetMapping("/cancelqingjia/{id}")
-    fun cancel(@PathVariable(name = "id") vacateid:String): ResultVO<Any?> {
+    @ApiOperation(value = "根据uid取消请假", notes = "根据uid取消请假")
+    @ApiImplicitParam(name = "id",value = "vacateid",required = true)
+    fun cancel(@PathVariable(name = "id") vacateid:String?): ResultVO<Any> {
+        vacateid?:return ResultUtil.error(-1, "id不可为空")
         val qingjia = qingjiaRepo.findById(vacateid).orElse(null)?.apply {
             if(this.iscancel==1)  return ResultUtil.error(-2,"所查找的请假已删除")
             iscancel = 1
@@ -87,7 +101,8 @@ class QingControl(private val actrepo: ActRepo,
 
 
     @PostMapping("/editQing")
-    fun editAct(@Valid qingjiaForm: QingjiaForm,
+    @ApiOperation(value = "根据qingjiaForm edit请假", notes = "根据qingjiaForm edit请假")
+    fun editAct(@ApiParam(name="传入对象",value="传入json格式",required=true)@Valid qingjiaForm: QingjiaForm,
                 bindRes: BindingResult): ResultVO<Any?> {
         if(bindRes.hasErrors()) return ResultUtil.error(-1, bindRes.getFieldError()!!.defaultMessage)
         qingjiaForm.apply {
@@ -104,9 +119,11 @@ class QingControl(private val actrepo: ActRepo,
     }
 
     @GetMapping("/judgeQing")
-    fun judgeact(@RequestParam(name = "isjudge") isjudge:Int?,
-                 @RequestParam(name = "judgeid") judgeid:String?,
-                 @RequestParam(name = "vacateid") vacateid:String?): ResultVO<Any?> {
+    @ApiOperation(value = "根据judgeid等审批请假", notes = "根据judgeid等审批请假")
+
+    fun judgeact(@ApiParam("isjudge") @RequestParam(name = "isjudge") isjudge:Int?,
+                 @ApiParam("judgeid") @RequestParam(name = "judgeid") judgeid:String?,
+                 @ApiParam("vacateid") @RequestParam(name = "vacateid") vacateid:String?): ResultVO<Any?> {
         vacateid?:return ResultUtil.error(-1, "id不可为空")
         isjudge?:return ResultUtil.error(-1, "isjudge不可为空")
         judgeid?:return ResultUtil.error(-1, "judgeid不可为空")
@@ -147,13 +164,13 @@ class QingControl(private val actrepo: ActRepo,
         judgeId?:return ResultUtil.error(-1, "judgeid不可为空")
         val judge = judrepo.findById(judgeId).orElse(null)?.apply {
             if(this.judgetype!=2) ResultUtil.error(-1, "judge不是请假类型")
-        }?:return ResultUtil.error(-1, "judge不可为空")
-        return ResultUtil.success(actrepo.findById(judge.judgecontentid).orElse(null))
+        }?:return ResultUtil.error(-1, "judge")
+        return ResultUtil.success(qingjiaRepo.findById(judge.judgecontentid).orElse(null))
     }
 
     @GetMapping("getdepMenberQingByministerId")
     //返回的请假表里面是全部的，并没有进行筛选是否已经批准
-    fun getdepMenberByfenguan(@RequestParam(value = "ministerId") ministerId: String?): ResultVO<*>? {
+    fun getdepMenberByfenguan(@RequestParam(name = "ministerId") ministerId: String?): ResultVO<*>? {
         ministerId?:return ResultUtil.error(-1, "ministerId不可为空")
         val minist: User = userBaseRepository.findById(ministerId).orElse(null)
         val userQinglist = mutableListOf<QingjiaEntity>().let { userQinglist->
@@ -164,12 +181,24 @@ class QingControl(private val actrepo: ActRepo,
             }
             userQinglist
         }
-        return ResultUtil.success(userQinglist)
+        val userqingJudge = mutableListOf<Judgedto>().let { userqingJudge->
+            userQinglist.forEach {
+                judrepo.findJudgeEntitiesByJudgecontentid(it.vacateid!!).forEach {
+                    val judgedto=Judgedto("",0,"")
+                    BeanUtils.copyProperties(it,judgedto)
+                    judgedto.isjudgestr = JudgeUtils.getbycode(judgedto.isjudge)!!
+                    judgedto.judgetypeStr = JudgeUtils.gettypebycode(judgedto.judgetype)!!
+                    userqingJudge.add(judgedto)
+                }
+            }
+            userqingJudge
+        }
+        return ResultUtil.success(userqingJudge)
     }
 
     @GetMapping("getministMenberQingByfenguanchairId")
     //返回的请假表里面是全部的，并没有进行筛选是否已经批准
-    fun getdepMenberQingBychairId(@RequestParam(value = "chairId") chairId: String?): ResultVO<*>? {
+    fun getdepMenberQingBychairId(@RequestParam(name = "chairId") chairId: String?): ResultVO<*>? {
         chairId?:return ResultUtil.error(-1, "chairId不可为空")
         val userqing = mutableListOf<QingjiaEntity>()
         departRepo.findDepartmentsByChairmanid(chairId).forEach{
@@ -179,12 +208,25 @@ class QingControl(private val actrepo: ActRepo,
                 }
             }
         }
-        return ResultUtil.success(userqing)
+
+        val userqingJudge = mutableListOf<Judgedto>().let { userqingJudge->
+            userqing.forEach {
+                judrepo.findJudgeEntitiesByJudgecontentid(it.vacateid!!).forEach {
+                    val judgedto=Judgedto("",0,"")
+                    BeanUtils.copyProperties(it,judgedto)
+                    judgedto.isjudgestr = JudgeUtils.getbycode(judgedto.isjudge)!!
+                    judgedto.judgetypeStr = JudgeUtils.gettypebycode(judgedto.judgetype)!!
+                    userqingJudge.add(judgedto)
+                }
+            }
+            userqingJudge
+        }
+        return ResultUtil.success(userqingJudge)
     }
 
     @GetMapping("getfuchairMenberQingByzhengchairId")
     //返回的请假表里面是全部的，并没有进行筛选是否已经批准
-    fun getfuchairMenberQingByzhengchairId(@RequestParam(value = "chairId") chairId: String?): ResultVO<*>? {
+    fun getfuchairMenberQingByzhengchairId(@RequestParam(name = "chairId") chairId: String?): ResultVO<*>? {
         chairId?:return ResultUtil.error(-1, "chairId不可为空")
         val userqing = mutableListOf<QingjiaEntity>().let{ userqing->
             userBaseRepository.findUsersByRank("2").forEach(){
@@ -194,9 +236,19 @@ class QingControl(private val actrepo: ActRepo,
             }
             userqing
         }
-        return ResultUtil.success(userqing)
+        val userqingJudge = mutableListOf<Judgedto>().let { userqingJudge->
+            userqing.forEach {
+                judrepo.findJudgeEntitiesByJudgecontentid(it.vacateid!!).forEach {
+                    val judgedto=Judgedto("",0,"")
+                    BeanUtils.copyProperties(it,judgedto)
+                    judgedto.isjudgestr = JudgeUtils.getbycode(judgedto.isjudge)!!
+                    judgedto.judgetypeStr = JudgeUtils.gettypebycode(judgedto.judgetype)!!
+                    userqingJudge.add(judgedto)
+                }
+            }
+            userqingJudge
+        }
+        return ResultUtil.success(userqingJudge)
     }
-
-
 
 }

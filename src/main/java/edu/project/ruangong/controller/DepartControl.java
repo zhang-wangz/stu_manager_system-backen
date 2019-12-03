@@ -171,6 +171,7 @@ public class DepartControl {
     public ResultVO getdepMenberbyId(@RequestParam(value = "depId") String depId){
         Department department = departRepo.findById(depId).orElse(null);
         if(department==null) return  ResultUtil.error(DepartEnum.BACK_WRONG.getCode(),DepartEnum.BACK_WRONG.getMsg());
+        System.out.println("部门id"+department.getDepartmentname());
         List<User> userlist = userBaseRepository.findUsersByDepartmentsAndSoftdelete(department.getDepartmentname(),0);
         return ResultUtil.success(userlist);
     }

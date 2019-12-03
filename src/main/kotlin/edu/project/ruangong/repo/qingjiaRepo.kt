@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository
  * @version init
  */
 interface qingjiaRepo:JpaRepository<QingjiaEntity,String> {
-    fun findQingjiaEntityByVacateperson(uid:String?):QingjiaEntity?
+    fun findQingjiaEntityByVacateperson(uid:String?):QingjiaEntity
 
     fun findQingjiaEntitysByVacateperson(uid:String?):List<QingjiaEntity>?
+
+
 }

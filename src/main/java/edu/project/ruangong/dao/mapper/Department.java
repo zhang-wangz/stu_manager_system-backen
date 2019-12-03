@@ -30,6 +30,6 @@ public class Department {
   }
 
   public String getDepartmentname(){
-    return this.ministerid;
+    return this.departmentname;
   }
 }

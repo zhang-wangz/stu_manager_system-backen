@@ -7,5 +7,5 @@ package edu.project.ruangong.enums
  */
 enum class applyenum(var code:Int,var msg:String){
     ACTIVITY(1,"活动类型"),
-    QINGJIA(1,"请假类型")
+    QINGJIA(2,"请假类型")
 }

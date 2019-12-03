@@ -1,27 +1,35 @@
 package edu.project.ruangong.controller
 
+import com.github.pagehelper.Page
+import com.github.pagehelper.PageHelper
+import com.github.pagehelper.PageInfo
 import edu.project.ruangong.dao.mapper.ActivityEntity
 import edu.project.ruangong.dao.mapper.JudgeEntity
-import edu.project.ruangong.dao.mapper.NoticeEntity
 import edu.project.ruangong.form.ActForm
+import edu.project.ruangong.form.Judgedto
 import edu.project.ruangong.repo.ActRepo
 import edu.project.ruangong.repo.DepartRepo
 import edu.project.ruangong.repo.JudgeRepo
 import edu.project.ruangong.repo.NoticeRepo
-import edu.project.ruangong.service.JudgeService
-import edu.project.ruangong.service.NoticeService
 import edu.project.ruangong.service.impl.JudgeServiceImpl
 import edu.project.ruangong.service.impl.NoticeServiceImpl
+import edu.project.ruangong.utils.JudgeUtils
 import edu.project.ruangong.utils.KeyUtil
 import edu.project.ruangong.utils.ResultUtil
 import edu.project.ruangong.vo.ResultVO
 import org.springframework.beans.BeanUtils
+import org.springframework.beans.propertyeditors.CustomDateEditor
+import org.springframework.data.domain.PageRequest.of
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.validation.BindingResult
+import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
-import java.sql.Date
+import org.springframework.web.servlet.function.ServerResponse
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.validation.Valid
+
 
 /**
  * @author  athonyw
@@ -38,16 +46,24 @@ class ActControl(private val actrepo:ActRepo,
                  private val noticerepo: NoticeRepo,
                  private val judgeService: JudgeServiceImpl,
                  private val noticeService: NoticeServiceImpl){
+    @InitBinder
+    fun initBinder(binder: WebDataBinder) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        dateFormat.timeZone= TimeZone.getTimeZone("GMT+:08:00")
+        dateFormat.isLenient = false
+        binder.registerCustomEditor(Date::class.java, CustomDateEditor(dateFormat, true))
+    }
 
     @PostMapping("/addAct")
-    fun addAct(@Valid actForm:ActForm,
+    fun addAct(@Valid actForm:ActForm?,
                bindRes: BindingResult):ResultVO<Any?>{
         if(bindRes.hasErrors()) return ResultUtil.error(-1, bindRes.getFieldError()!!.defaultMessage)
-        actForm.departmentassist?.apply {
+        actForm!!.departmentassist?.apply {
             this.split(",").forEach{
                 departRepo.findDepByDepartmentname(it)?: return ResultUtil.error(-1,"协同部门不存在")
             }
         }
+        println(TimeZone.getDefault())
         actForm.apply {
             if(starttime.before(Timestamp(System.currentTimeMillis()))) return ResultUtil.error(-1,"开始时间必须是一个未来时间")
             if(starttime.after(overtime)) return ResultUtil.error(-1,"开始时间必须比结束时间早")
@@ -75,7 +91,8 @@ class ActControl(private val actrepo:ActRepo,
 
 
     @GetMapping("/cancelAct/{id}")
-    fun cancel(@PathVariable(name = "id") actId:String):ResultVO<Any?>{
+    fun cancel(@PathVariable(name = "id") actId:String?):ResultVO<Any?>{
+        actId?:return ResultUtil.error(-1, "actId不可为空")
         val act = actrepo.findById(actId).orElse(null)?.apply {
             if(this.iscancel==1)  return ResultUtil.error(-2,"所查找的活动已删除")
             iscancel = 1
@@ -89,10 +106,10 @@ class ActControl(private val actrepo:ActRepo,
 
 
     @PostMapping("/editAct")
-    fun editAct(@Valid actForm:ActForm,
+    fun editAct(@Valid actForm:ActForm?,
                 bindRes: BindingResult):ResultVO<Any?>{
         if(bindRes.hasErrors()) return ResultUtil.error(-1, bindRes.getFieldError()!!.defaultMessage)
-        actForm.apply {
+        actForm!!.apply {
             activityid?:return ResultUtil.error(-1, "活动id不可为空")
             judgeid?:return ResultUtil.error(-1, "审批id不可为空")
         }
@@ -142,7 +159,25 @@ class ActControl(private val actrepo:ActRepo,
     fun getactList():ResultVO<Any?> =  ResultUtil.success(actrepo.findAll())
 
     @GetMapping("/getActJudgeList")
-    fun getactJudgeList():ResultVO<Any?> = ResultUtil.success(judrepo.findJudgeEntitiesByJudgetype(1))
+    fun getactJudgeList(@RequestParam(name = "page")page:Int,
+                        @RequestParam(name = "limit")limit:Int):ResultVO<Any?> {
+        val list = mutableListOf<Judgedto>()
+        val offset = (page-1)*limit
+        judrepo.findJudgeEntitiesByJudgetypeandlimit(1,limit,offset).let{ judgelist->
+            judgelist.forEach {
+                val judgedto=Judgedto("",0,"")
+                BeanUtils.copyProperties(it,judgedto)
+                judgedto.isjudgestr = JudgeUtils.getbycode(judgedto.isjudge)!!
+                judgedto.judgetypeStr = JudgeUtils.gettypebycode(judgedto.judgetype)!!
+                list.add(judgedto)
+            }
+        }
+        val num = judrepo.findJudgeEntitiesByJudgetype(1).size
+        return ResultUtil.success(mapOf(
+                "total" to num,
+                "list" to list
+        ))
+    }
 
     @GetMapping("/getactByjudgeId")
     fun getactByjudgeId(@RequestParam(name = "judgeId")judgeId:String?):ResultVO<Any?>{

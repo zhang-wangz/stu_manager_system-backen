@@ -1,5 +1,6 @@
 package edu.project.ruangong.form
 
+import org.springframework.format.annotation.DateTimeFormat
 import javax.persistence.Column
 import javax.persistence.Id
 import javax.persistence.Table
@@ -29,12 +30,14 @@ data class QingjiaForm(
         var vacatereason: String? = null,
 
         @Column(name = "leavetime", nullable = false)
+        @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
         @Future(message = "请确定一个未来的结束时间")
-        var leavetime: java.sql.Timestamp,
+        var leavetime: java.util.Date,
 
         @Column(name = "backtime", nullable = false)
+        @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
         @Future(message = "请确定一个未来的结束时间")
-        var backtime: java.sql.Timestamp
+        var backtime: java.util.Date
 ) {
 
     @Column(name = "judgeid")

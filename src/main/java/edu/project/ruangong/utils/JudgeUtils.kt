@@ -1,5 +1,6 @@
 package edu.project.ruangong.utils
 
+import edu.project.ruangong.enums.applyenum
 import edu.project.ruangong.enums.isjudgeEnum
 
 /**
@@ -13,7 +14,21 @@ class JudgeUtils {
         fun getbycode(code:Int?):String?{
             var res:String?=null
             isjudgeEnum.values().forEach {
-                if(code==it.code) res = it.msg.toString()
+                if(code==it.code){
+                    res = it.msg.toString()
+//                    println(it.code)
+                }
+            }
+            return res
+        }
+
+        fun gettypebycode(code:Int?):String?{
+            var res:String?=null
+            applyenum.values().forEach {
+                if(code==it.code){
+                    res = it.msg.toString()
+//                    println(it.code)
+                }
             }
             return res
         }
@@ -21,5 +36,6 @@ class JudgeUtils {
 }
 
 fun main() {
-    println(JudgeUtils.getbycode(1))
+    println(JudgeUtils.getbycode(0))
+    println(JudgeUtils.gettypebycode(1))
 }

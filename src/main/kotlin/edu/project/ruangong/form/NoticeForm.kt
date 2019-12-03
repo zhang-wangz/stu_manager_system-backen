@@ -1,6 +1,9 @@
 package edu.project.ruangong.form
 
+import io.swagger.annotations.ApiModel
+import org.springframework.format.annotation.DateTimeFormat
 import java.sql.Timestamp
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Id
 import javax.persistence.Table
@@ -12,6 +15,7 @@ import javax.validation.constraints.NotEmpty
  * @version init
  */
 @Table(name = "notice", schema = "stu_union", catalog = "")
+@ApiModel(value="NoticeForm",description="请求参数类" )
 data class NoticeForm(
         @Id
         @get:Column(name = "informid", nullable = false)
@@ -39,10 +43,12 @@ data class NoticeForm(
         var depuid: String?=null
 ){
     @Column(name = "deptime")
-    var starttime: Timestamp= Timestamp(System.currentTimeMillis())
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    var starttime: Date= Date(System.currentTimeMillis())
 
     @Column(name = "canceltime")
-    var overtime: Timestamp?=null
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    var overtime: Date?=null
 
     @Column(name = "noticetype")
     var noticetype: String?=null

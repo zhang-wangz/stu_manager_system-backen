@@ -22,6 +22,7 @@ public interface DepartRepo extends JpaRepository<Department,String>{
     @Query(value = "SELECT departmentname FROM department group by departmentname",nativeQuery = true)
     List<String> findDepartmentsName();
 
+
     List<Department> findDepartmentsByChairmanid(String chairId);
 
 

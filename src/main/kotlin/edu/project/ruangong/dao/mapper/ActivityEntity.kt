@@ -1,7 +1,7 @@
 package edu.project.ruangong.dao.mapper
 
-import java.sql.Date
-import java.sql.Timestamp
+import com.fasterxml.jackson.annotation.JsonFormat
+import java.util.Date
 import javax.persistence.*
 
 @Entity
@@ -37,10 +37,12 @@ data class ActivityEntity(
         lateinit var judgeid: String
 
         @Column(name = "starttime")
-        lateinit var starttime: Timestamp
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        lateinit var starttime: Date
 
         @Column(name = "overtime")
-        lateinit var overtime: Timestamp
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        lateinit var overtime: Date
 
         @Column(name = "iscancel")
         var iscancel:Int = 0

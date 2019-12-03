@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository
  * @version init
  */
 interface ActRepo :JpaRepository<ActivityEntity,String>{
-    fun findActivityEntitiesByApplyuserid(userid:String):List<ActivityEntity>;
+    fun findActivityEntitiesByApplyuserid(userid:String):List<ActivityEntity>
+
 }
