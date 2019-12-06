@@ -1,11 +1,7 @@
 package edu.project.ruangong.controller;
 
-import edu.project.ruangong.dao.mapper.Batch;
 import edu.project.ruangong.dao.mapper.Judgestu;
-import edu.project.ruangong.repo.BatchRepo;
-import edu.project.ruangong.repo.JudgeRepo;
 import edu.project.ruangong.repo.JudgeStuRepo;
-import edu.project.ruangong.utils.KeyUtil;
 import edu.project.ruangong.utils.ResultUtil;
 import edu.project.ruangong.vo.ResultVO;
 import org.springframework.beans.BeanUtils;
@@ -14,7 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.xml.transform.Result;
 
 /**
  * @author athonyw
@@ -37,10 +32,13 @@ public class JudgeStuControl {
         return ResultUtil.success();
     }
 
-    @GetMapping("getBatchScoreByuid")
+
+    @GetMapping("getBatchByuid")
     public ResultVO getBatchScoreByuid(@RequestParam(name = "uid")String uid){
-            Judgestu judgestu = judgeStu.findJudgeStuByUid(uid);
-            return ResultUtil.success(judgestu.getScore());
+//            Judgestu judgestu = judgeStu.findJudgeStuByUid(uid);
+//            if(judgestu==null) return ResultUtil.error(-1,"wrong");
+//            return ResultUtil.success(judgestu.getScore());
+        return ResultUtil.success(judgeStu.findJudgestusByUid(uid));
     }
 
 

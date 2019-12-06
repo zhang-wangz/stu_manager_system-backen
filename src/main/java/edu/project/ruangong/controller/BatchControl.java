@@ -1,6 +1,5 @@
 package edu.project.ruangong.controller;
 
-import com.sun.org.apache.xml.internal.security.keys.KeyUtils;
 import edu.project.ruangong.dao.mapper.Batch;
 import edu.project.ruangong.repo.BatchRepo;
 import edu.project.ruangong.utils.KeyUtil;
@@ -8,13 +7,16 @@ import edu.project.ruangong.utils.ResultUtil;
 import edu.project.ruangong.vo.ResultVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author athonyw
@@ -26,6 +28,15 @@ import javax.validation.Valid;
 public class BatchControl {
     @Autowired
     private BatchRepo batchRepo;
+
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setLenient(false);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+:08:00"));
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+    }
 
     @PostMapping("addBatch")
     public ResultVO addBatch(@Valid Batch batch,

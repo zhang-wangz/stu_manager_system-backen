@@ -14,7 +14,6 @@ import org.springframework.beans.propertyeditors.CustomDateEditor
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
-import java.net.BindException
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,7 +46,7 @@ class NoticeControl(val userBaseRepository: UserBaseRepository,
     @ApiImplicitParam(name = "uid", value = "用户id", required=true, dataType = "String")
     @ApiResponse(code = 0, message = "操作成功")
     fun getnoticeByuid(@RequestParam(name = "uid")uid:String?): ResultVO<Any>? =
-        ResultUtil.success(noticeRepo.findNoticeEntityByUserid(uid))
+        ResultUtil.success(noticeRepo.findNoticeEntitiesByUserid(uid))
 
     @PostMapping("/postnoticeZidingyi")
     @ApiOperation(value = "提交通知内容", notes = "根据NoticeForm提交通知内容")

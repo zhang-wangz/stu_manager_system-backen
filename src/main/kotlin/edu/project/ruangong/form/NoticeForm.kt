@@ -2,7 +2,6 @@ package edu.project.ruangong.form
 
 import io.swagger.annotations.ApiModel
 import org.springframework.format.annotation.DateTimeFormat
-import java.sql.Timestamp
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Id
@@ -36,7 +35,7 @@ data class NoticeForm(
 
 
         @get:Column(name = "checknum", nullable = false)
-        var checknum: Int? = null,
+        var checknum: Int? = 0,
 
         @Column(name = "depuid")
         @NotEmpty(message = "depuid不可为空")

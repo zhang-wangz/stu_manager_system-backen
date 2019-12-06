@@ -1,13 +1,10 @@
 package edu.project.ruangong.form
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
-import edu.project.ruangong.enums.applyenum
 import edu.project.ruangong.utils.JudgeUtils
 import java.sql.Date
 import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 
 /**
  * @author  athonyw
@@ -33,6 +30,7 @@ data class Judgedto(
     var judgetypeStr:String? = JudgeUtils.gettypebycode(judgetype)
 
     @Column(name = "handintime")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     var handintime: Date = Date(System.currentTimeMillis())
 
     var isjudgestr:String? = JudgeUtils.getbycode(isjudge)

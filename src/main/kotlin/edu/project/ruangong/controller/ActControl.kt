@@ -1,8 +1,5 @@
 package edu.project.ruangong.controller
 
-import com.github.pagehelper.Page
-import com.github.pagehelper.PageHelper
-import com.github.pagehelper.PageInfo
 import edu.project.ruangong.dao.mapper.ActivityEntity
 import edu.project.ruangong.dao.mapper.JudgeEntity
 import edu.project.ruangong.form.ActForm
@@ -10,7 +7,6 @@ import edu.project.ruangong.form.Judgedto
 import edu.project.ruangong.repo.ActRepo
 import edu.project.ruangong.repo.DepartRepo
 import edu.project.ruangong.repo.JudgeRepo
-import edu.project.ruangong.repo.NoticeRepo
 import edu.project.ruangong.service.impl.JudgeServiceImpl
 import edu.project.ruangong.service.impl.NoticeServiceImpl
 import edu.project.ruangong.utils.JudgeUtils
@@ -19,12 +15,10 @@ import edu.project.ruangong.utils.ResultUtil
 import edu.project.ruangong.vo.ResultVO
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.propertyeditors.CustomDateEditor
-import org.springframework.data.domain.PageRequest.of
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.servlet.function.ServerResponse
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,9 +37,9 @@ import javax.validation.Valid
 class ActControl(private val actrepo:ActRepo,
                  private val judrepo:JudgeRepo,
                  private val departRepo:DepartRepo,
-                 private val noticerepo: NoticeRepo,
                  private val judgeService: JudgeServiceImpl,
                  private val noticeService: NoticeServiceImpl){
+
     @InitBinder
     fun initBinder(binder: WebDataBinder) {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

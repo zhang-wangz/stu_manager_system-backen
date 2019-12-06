@@ -191,10 +191,15 @@ public class DepartControl {
     public ResultVO getdepInfoByfenguan(@RequestParam(value = "chairId") String fenguanId){
         List users = new ArrayList<>();
         List<Department> fenguandep = departRepo.findDepartmentsByChairmanid(fenguanId);
-//        for(Department each:fenguandep){
-//            users.add(getdepMenberbyId(each.getDepartmentid()).getDataObj());
-//        }
-        return ResultUtil.success(fenguandep);
+        List<Departform> departformList = new ArrayList<>();
+        for(Department each:fenguandep){
+            Departform departform = new Departform();
+            BeanUtils.copyProperties(each,departform);
+            departform.setChairmanname((Objects.requireNonNull(userBaseRepository.findById(each.getChairmanid()).orElse(null))).getUsername());
+            departform.setMinistername((Objects.requireNonNull(userBaseRepository.findById(each.getMinisterid()).orElse(null))).getUsername());
+            departformList.add(departform);
+        }
+        return ResultUtil.success(departformList);
     }
 
 

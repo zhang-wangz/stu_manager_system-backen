@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.Query
 interface NoticeRepo:JpaRepository<NoticeEntity,String> {
     fun findNoticeEntityByUserid(uid:String?):NoticeEntity
 
+    fun findNoticeEntitiesByUserid(uid:String?):List<NoticeEntity>
+
     fun findNoticeEntitiesByInformerid(uid:String?):List<NoticeEntity>
 
     @Query(value = "select  count(*) from notice", nativeQuery = true)

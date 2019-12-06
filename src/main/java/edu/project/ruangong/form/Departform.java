@@ -1,19 +1,20 @@
 package edu.project.ruangong.form;
 
-import edu.project.ruangong.dao.mapper.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.project.ruangong.repo.UserBaseRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.sql.Date;
-import java.util.Objects;
 
 @Data
 public class Departform {
+
     @Autowired
+    @JsonIgnore
     private UserBaseRepository userBaseRepository;
 
     private String departmentid;
@@ -39,6 +40,11 @@ public class Departform {
     private String ministername;
 
     private String chairmanname;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private java.sql.Date createtime;
+
+    private java.sql.Date deletetime;
 
 
 }

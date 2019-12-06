@@ -3,7 +3,6 @@ package edu.project.ruangong.controller
 import edu.project.ruangong.dao.mapper.JudgeEntity
 import edu.project.ruangong.dao.mapper.QingjiaEntity
 import edu.project.ruangong.dao.mapper.User
-import edu.project.ruangong.dto.qingjiadto
 import edu.project.ruangong.form.Judgedto
 import edu.project.ruangong.form.QingjiaForm
 import edu.project.ruangong.repo.*
@@ -14,7 +13,6 @@ import edu.project.ruangong.utils.KeyUtil
 import edu.project.ruangong.utils.ResultUtil
 import edu.project.ruangong.vo.ResultVO
 import io.swagger.annotations.*
-import lombok.extern.log4j.Log4j2
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.propertyeditors.CustomDateEditor
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +23,6 @@ import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.validation.Valid
-import kotlin.collections.ArrayList
 
 /**
  * @author  athonyw
@@ -208,7 +205,6 @@ class QingControl(private val actrepo: ActRepo,
                 }
             }
         }
-
         val userqingJudge = mutableListOf<Judgedto>().let { userqingJudge->
             userqing.forEach {
                 judrepo.findJudgeEntitiesByJudgecontentid(it.vacateid!!).forEach {

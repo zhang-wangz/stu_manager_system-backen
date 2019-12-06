@@ -3,6 +3,8 @@ package edu.project.ruangong.repo;
 import edu.project.ruangong.dao.mapper.Judgestu;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 /**
  * @author athonyw
  * @version init
@@ -10,4 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface JudgeStuRepo extends  JpaRepository<Judgestu,Integer> {
     Judgestu findJudgeStuByUid(String uid);
+
+    List<Judgestu> findJudgestusByUid(String uid);
 }
