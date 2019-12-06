@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class JudgeServiceImpl(var judgRepo:JudgeRepo):JudgeService{
     override fun judge(judgId: String?, isJudge: Int?):JudgeEntity{
-        judgId?:throw RuntimeException("judgeid不可为空")
+        judgId?:throw RuntimeException("judgeid不可为空") as Throwable
         isJudge?:throw RuntimeException("isJudge不可为空")
         val judge = judgRepo.findById(judgId).orElse(null)?.apply {
             this.isjudge = isJudge

@@ -1,9 +1,6 @@
 package edu.project.ruangong.form;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.project.ruangong.repo.UserBaseRepository;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
@@ -12,10 +9,6 @@ import javax.validation.constraints.Pattern;
 
 @Data
 public class Departform {
-
-    @Autowired
-    @JsonIgnore
-    private UserBaseRepository userBaseRepository;
 
     private String departmentid;
 

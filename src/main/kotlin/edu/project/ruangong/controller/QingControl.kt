@@ -225,7 +225,7 @@ class QingControl(private val actrepo: ActRepo,
     fun getfuchairMenberQingByzhengchairId(@RequestParam(name = "chairId") chairId: String?): ResultVO<*>? {
         chairId?:return ResultUtil.error(-1, "chairId不可为空")
         val userqing = mutableListOf<QingjiaEntity>().let{ userqing->
-            userBaseRepository.findUsersByRank("2").forEach(){
+            userBaseRepository.findUsersByRank("4").forEach(){
                 qingjiaRepo.findQingjiaEntitysByVacateperson(it.uid)?.apply {
                     userqing.addAll(this)
                 }
