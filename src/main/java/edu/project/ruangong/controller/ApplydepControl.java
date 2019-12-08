@@ -2,6 +2,7 @@ package edu.project.ruangong.controller;
 
 import edu.project.ruangong.dao.mapper.Applydep;
 import edu.project.ruangong.repo.ApplydepRepo;
+import edu.project.ruangong.utils.KeyUtil;
 import edu.project.ruangong.utils.ResultUtil;
 import edu.project.ruangong.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,11 @@ public class ApplydepControl {
         String depId = map.get("depId");
         String reason = map.get("reason");
         Applydep applydep = new Applydep();
+        applydep.setApplydepid(KeyUtil.getUniqueKey());
         applydep.setReason(reason);
         applydep.setDepid(depId);
         applydep.setUid(uid);
+        applydepRepo.save(applydep);
         return ResultUtil.success();
     }
 
@@ -47,7 +50,7 @@ public class ApplydepControl {
     }
 
     @GetMapping("changeapplyflag")
-    public ResultVO getapplydepByuid(@RequestParam(name = "key",required = true) Integer key,
+    public ResultVO getapplydepByuid(@RequestParam(name = "key",required = true) String key,
                                      @RequestParam(name = "flag") Integer flag) {
         Applydep applydep = applydepRepo.findById(key).orElse(null);
         applydep.setFlag(flag);

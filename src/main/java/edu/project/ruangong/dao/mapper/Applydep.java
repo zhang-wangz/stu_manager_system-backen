@@ -12,7 +12,8 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 public class Applydep {
   @Id
-  private Integer key;
+  @Column(name = "Applydepid")
+  private String Applydepid;
 
   @Column(name = "uid")
   @NotEmpty(message = "uid不可为空")
@@ -27,6 +28,5 @@ public class Applydep {
   private String reason;
 
   @Column(name = "flag")
-  @NotEmpty(message = "flag不可为空")
-  private Integer flag;
+  private Integer flag=0;
 }

@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2019/12/6 2:48 下午
  */
 
-public interface ApplydepRepo extends JpaRepository<Applydep,Integer>{
+public interface ApplydepRepo extends JpaRepository<Applydep,String>{
     List<Applydep> findApplydepsByDepid(String depId);
 
     Applydep findApplydepByUid(String depId);

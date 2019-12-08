@@ -1,10 +1,11 @@
 package edu.project.ruangong.form;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -14,6 +15,7 @@ import javax.validation.constraints.*;
  */
 @Data
 public class UserFormRegister {
+
     @Pattern(regexp = "^[31][0-9].{6}",message = "学号以31开头")
     @Size(max=8,min = 8,message = "请输入正确的学号")
     private String  uid;
